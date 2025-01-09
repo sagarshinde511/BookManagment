@@ -137,7 +137,6 @@ def fetch_rfid(book_id):
             cursor.close()
             connection.close()
 
-
 def create_history(rfid, book_id):
     try:
         # Connect to the MySQL database
@@ -156,6 +155,42 @@ def create_history(rfid, book_id):
         # Commit the transaction
         conn.commit()
         
+        # Close the connection
+        cursor.close()
+        conn.close()
+        
+        return True  # Success
+    except mysql.connector.Error as e:
+        st.error(f"Database error: {e}")
+        return False  # Failure
+    except Exception as e:
+        st.error(f"Unexpected error: {e}")
+        return False
+
+def update_return_status(book_id):
+    try:
+        # Connect to the MySQL database
+        conn = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=passwd,
+            database=db_name
+        )
+        cursor = conn.cursor()
+
+        # Update ReturnStatus to 1 where BookId matches
+        query = "UPDATE BookHistory SET ReturnStatus = 1 WHERE BookId = %s AND ReturnStatus IS NULL"
+        cursor.execute(query, (book_id,))
+        
+        # Commit the transaction
+        conn.commit()
+
+        # Check if rows were affected
+        if cursor.rowcount > 0:
+            st.success(f"Return status updated for Book ID {book_id}.")
+        else:
+            st.warning("No matching entry found for return or already returned.")
+
         # Close the connection
         cursor.close()
         conn.close()
@@ -194,7 +229,7 @@ def main():
                 st.write(f"**In Stock:** {book_info['InStock']}")
                 st.write(f"**Available Stock:** {book_info['AvailableStock']}")
 
-                if int(book_info['AvailableStock']) > 0 and issue_or_return == "Issue":
+                if issue_or_return == "Issue" and int(book_info['AvailableStock']) > 0:
                     # Add a button to assign the book
                     if st.button("Assign Book"):
                         rfid = fetch_rfid(book_id)  # Fetch RFID for the book
@@ -209,8 +244,9 @@ def main():
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
                 elif issue_or_return == "Return":
-                    # Logic for handling return (you can add return-specific behavior here)
-                    st.info("Return functionality is being handled here.")
+                    # Handle return by updating the return status
+                    if st.button("Return Book"):
+                        update_return_status(book_id)
                 else:
                     st.warning("This book is out of stock.")
             else:
