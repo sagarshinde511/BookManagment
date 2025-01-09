@@ -167,7 +167,7 @@ def create_history(rfid, book_id):
         st.error(f"Unexpected error: {e}")
         return False
 
-def update_return_status(book_id):
+def update_return_status_and_stock(book_id):
     try:
         # Connect to the MySQL database
         conn = mysql.connector.connect(
@@ -178,16 +178,20 @@ def update_return_status(book_id):
         )
         cursor = conn.cursor()
 
-        # Update ReturnStatus to 1 where BookId matches
+        # Update ReturnStatus to 1 where BookId matches and ReturnStatus is NULL
         query = "UPDATE BookHistory SET ReturnStatus = 1 WHERE BookId = %s AND ReturnStatus IS NULL"
         cursor.execute(query, (book_id,))
         
+        # Increase the available stock by 1 for the book
+        stock_query = "UPDATE BookInfo SET AvailableStock = AvailableStock + 1 WHERE id = %s"
+        cursor.execute(stock_query, (book_id,))
+
         # Commit the transaction
         conn.commit()
 
         # Check if rows were affected
         if cursor.rowcount > 0:
-            st.success(f"Return status updated for Book ID {book_id}.")
+            st.success(f"Return status updated and available stock increased for Book ID {book_id}.")
         else:
             st.warning("No matching entry found for return or already returned.")
 
@@ -244,9 +248,9 @@ def main():
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
                 elif issue_or_return == "Return":
-                    # Handle return by updating the return status
+                    # Handle return by updating the return status and increasing stock
                     if st.button("Return Book"):
-                        update_return_status(book_id)
+                        update_return_status_and_stock(book_id)
                 else:
                     st.warning("This book is out of stock.")
             else:
