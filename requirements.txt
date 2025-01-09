@@ -2,3 +2,4 @@ streamlit
 mysql-connector-python
 opencv-python-headless
 Pillow
+numpy
