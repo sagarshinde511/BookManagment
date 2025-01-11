@@ -360,29 +360,6 @@ def main():
             if st.button("Read RFID"):
                 rfid_no = fetch_rfid_data()
                 if rfid_no:
-                    st.success(f"RFID Number: {rfid_no}")
-                    status_filter = st.radio(
-                        "Select group of books:",
-                        ("Current Issued Books", "Past Issued Books")
-                    )
-                    
-                    # Map radio button selection to filter
-                    status_map = {
-                        "Current Issued Books": "current",
-                        "Past Issued Books": "past"
-                    }
-                    
-                    selected_status = status_map[status_filter]
-                    
-                    # Fetch data
-                    books = fetch_grouped_books(selected_status)
-                    
-                    if books:
-                        st.write(f"### {status_filter}")
-                        st.table(books)
-                    else:
-                        st.error("No data available.")
-                    #book_history = fetch_book_history(rfid_no)
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
