@@ -506,9 +506,9 @@ def main():
         
                 # Book addition or update form
                 with st.form("book_form"):
-                    action = st.radio("Select Action", ["Add New Book", "Update Existing Book"])
-                    if action == "Update Existing Book":
-                        book_id = st.text_input("Book ID (for Update)")
+                    #action = st.radio("Select Action", ["Add New Book", "Update Existing Book])
+                    #if action == "Update Existing Book":
+                    #    book_id = st.text_input("Book ID (for Update)")
                     book_name = st.text_input("Book Name")
                     author = st.text_input("Author")
                     Instock = st.text_input("Instock")
