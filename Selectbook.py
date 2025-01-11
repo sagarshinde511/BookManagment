@@ -362,7 +362,7 @@ def main():
     with tab1:
         issue_or_return = st.radio(
             "What action would you like to perform?",
-            ["Issue Book", "Return Book", "CheckBooks"]
+            ["CheckBooks", "Issue Book", "Return Book"]
         )
 
         # Only call `read_qr_code_from_camera` if "Issue Book" or "Return Book" is selected
