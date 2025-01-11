@@ -391,6 +391,7 @@ def main():
 
         # Check if the login button is clicked
         if login_button:
+            st.subheader(authenticate(username, password):)
             if authenticate(username, password):
                 st.session_state.logged_in = True
                 st.sidebar.success("Login successful!")
