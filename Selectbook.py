@@ -5,6 +5,7 @@ import numpy as np
 import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
+import pandas as pd
 
 # MySQL database connection details
 host = "82.180.143.66"
