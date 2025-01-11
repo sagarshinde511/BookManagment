@@ -269,10 +269,10 @@ def main():
             ["Issue Book", "Return Book","CheckBooks"]
         )
 
-        book_id = read_qr_code_from_camera(issue_or_return.lower())
-        if book_id:
-            st.session_state["book_id"] = book_id
-
+       if issue_or_return in ["Issue Book", "Return Book"]:
+            book_id = read_qr_code_from_camera(issue_or_return.lower())
+            if book_id:
+                st.session_state["book_id"] = book_id
     with tab2:
         if "book_id" in st.session_state:
             book_id = st.session_state["book_id"]
