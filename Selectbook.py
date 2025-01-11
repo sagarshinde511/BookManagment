@@ -291,7 +291,17 @@ def fetch_all_books():
     cursor.close()
     conn.close()
     return pd.DataFrame(results)
+    
+def update_book_info(book_id, book_name, author):
+    query = "UPDATE BookInfo SET BookName = %s, Author = %s WHERE id = %s"
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, (book_name, author, book_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
 
+# Streamlit app
 # Add a new book to the BookInfo table
 def add_new_book(book_name, author,Instock, AvailableStock):
     query = "INSERT INTO BookInfo (BookName, Author, Instock, AvailableStock) VALUES (%s, %s, %s, %s)"
@@ -453,13 +463,16 @@ def main():
                         book_id = st.text_input("Book ID (for Update)")
                     book_name = st.text_input("Book Name")
                     author = st.text_input("Author")
+                    Instock = st.text_input("Instock")
+                    AvailableStock = st.text_input("AvailableStock")
+
                     submit = st.form_submit_button("Submit")
         
                     if submit:
                         if action == "Add New Book":
                             if book_name.strip() and author.strip():
                                 try:
-                                    add_new_book(book_name, author)
+                                    add_new_book(book_name, author,Instock, AvailableStock)
                                     st.success(f"Book '{book_name}' by {author} added successfully!")
                                 except Exception as e:
                                     st.error(f"Error adding book: {e}")
