@@ -264,8 +264,7 @@ def fetch_issued_books():
 
 def main():
     # Create tabs for the app
-    tab1, tab2 = st.tabs(["QR Code Scanner", "Book Information Viewer"])
-
+tab1, tab2, tab3 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List"])
     with tab1:
         issue_or_return = st.radio(
             "What action would you like to perform?",
@@ -321,7 +320,8 @@ def main():
                 st.dataframe(df)
             else:
                 st.info("No books are currently issued.")
-    
+
+
 
 if __name__ == "__main__":
     main()
