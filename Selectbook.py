@@ -282,6 +282,25 @@ def fetch_rfid_data():
             cursor.close()
             connection.close()
 
+def fetch_all_books():
+    query = "SELECT id, BookName, Author FROM BookInfo"
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(query)
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return pd.DataFrame(results)
+
+# Add a new book to the BookInfo table
+def add_new_book(book_name, author):
+    query = "INSERT INTO BookInfo (BookName, Author) VALUES (%s, %s)"
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, (book_name, author))
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def fetch_book_history(rfid_no):
     """
@@ -327,7 +346,7 @@ def fetch_book_history(rfid_no):
 
 def main():
     # Create tabs for the app
-    tab1, tab2, tab3 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List"])
+    tab1, tab2, tab3, tab4 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List", "All Books"])
     
     
     with tab1:
@@ -407,8 +426,36 @@ def main():
                         st.error(f"An error occurred: {e}")
                 else:
                     st.warning("Please enter a valid BookId.")
-        
-        
+    with tab4:
+            st.subheader("Serch Book Here")
+            # Input for BookId
+            # Display all books
+            try:
+                books = fetch_all_books()
+                if not books.empty:
+                    st.dataframe(books)
+                else:
+                    st.write("No books found in the library.")
+            except Exception as e:
+                st.error(f"Error fetching books: {e}")
+            
+            st.subheader("Add a New Book")
+            
+            # Book addition form
+            with st.form("add_book_form"):
+                book_name = st.text_input("Book Name")
+                author = st.text_input("Author")
+                submit = st.form_submit_button("Add Book")
+                
+                if submit:
+                    if book_name.strip() and author.strip():
+                        try:
+                            add_new_book(book_name, author)
+                            st.success(f"Book '{book_name}' by {author} added successfully!")
+                        except Exception as e:
+                            st.error(f"Error adding book: {e}")
+                    else:
+                        st.warning("Please provide both Book Name and Author.")
         
 if __name__ == "__main__":
     main()
