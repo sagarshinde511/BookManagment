@@ -290,7 +290,7 @@ def fetch_rfid_data():
 
 def fetch_book_history(rfid_no):
     """
-    Fetch and group book history by ReturnStatus for a given RFidNo.
+    Fetch all rows from BookHistory where RFidNo matches the given value.
     """
     try:
         # Establish connection to MySQL database
@@ -320,15 +320,7 @@ def fetch_book_history(rfid_no):
             """
             cursor.execute(query, (rfid_no,))
             result = cursor.fetchall()
-
-            # Separate results into two groups based on ReturnStatus
-            current_issued_books = [row for row in result if row['ReturnStatus'] == 0]
-            past_issued_books = [row for row in result if row['ReturnStatus'] == 1]
-
-            return {
-                "current_issued_books": current_issued_books,
-                "past_issued_books": past_issued_books
-            }
+            return result
     except Error as e:
         st.error(f"Error connecting to the database: {e}")
         return None
@@ -336,6 +328,7 @@ def fetch_book_history(rfid_no):
         if connection.is_connected():
             cursor.close()
             connection.close()
+
 
 def main():
     # Create tabs for the app
@@ -359,22 +352,10 @@ def main():
                 rfid_no = fetch_rfid_data()
                 if rfid_no:
                     st.success(f"RFID Number: {rfid_no}")
-                    grouped_history = fetch_book_history(rfid_no)
-        
-                    if grouped_history:
-                        # Display Currently Issued Books
-                        st.subheader("Currently Issued Books")
-                        if grouped_history["current_issued_books"]:
-                            st.table(grouped_history["current_issued_books"])
-                        else:
-                            st.info("No books are currently issued.")
-        
-                        # Display Past Issued Books
-                        st.subheader("Past Issued Books")
-                        if grouped_history["past_issued_books"]:
-                            st.table(grouped_history["past_issued_books"])
-                        else:
-                            st.info("No past issued books found.")
+                    book_history = fetch_book_history(rfid_no)
+                    if book_history:
+                        st.subheader("Book History")
+                        st.table(book_history)
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
