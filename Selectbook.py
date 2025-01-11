@@ -395,7 +395,7 @@ def main():
                 st.session_state.logged_in = True
                 st.sidebar.success("Login successful!")
             else:
-                st.sidebar.error("Invalid username or password.")
+                st.sidebar.error("Invalid username or password check once.")
 
     # Only show the main content if the user is authenticated
     if "logged_in" in st.session_state and st.session_state.logged_in:
