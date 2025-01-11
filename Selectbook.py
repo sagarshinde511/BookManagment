@@ -290,7 +290,7 @@ def fetch_rfid_data():
 
 def fetch_book_history(rfid_no):
     """
-    Fetch all rows from BookHistory where RFidNo matches the given value.
+    Fetch and group book history by ReturnStatus for a given RFidNo.
     """
     try:
         # Establish connection to MySQL database
@@ -320,7 +320,15 @@ def fetch_book_history(rfid_no):
             """
             cursor.execute(query, (rfid_no,))
             result = cursor.fetchall()
-            return result
+
+            # Separate results into two groups based on ReturnStatus
+            current_issued_books = [row for row in result if row['ReturnStatus'] == 0]
+            past_issued_books = [row for row in result if row['ReturnStatus'] == 1]
+
+            return {
+                "current_issued_books": current_issued_books,
+                "past_issued_books": past_issued_books
+            }
     except Error as e:
         st.error(f"Error connecting to the database: {e}")
         return None
@@ -328,7 +336,6 @@ def fetch_book_history(rfid_no):
         if connection.is_connected():
             cursor.close()
             connection.close()
-
 
 def main():
     # Create tabs for the app
