@@ -398,8 +398,6 @@ def main():
 
     # Only show the main content if the user is authenticated
     if "logged_in" in st.session_state and st.session_state.logged_in:
-
-    
         # Create tabs for the app
         tab1, tab2, tab3, tab4 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List", "All Books"])
         
