@@ -16,6 +16,37 @@ HOST = "82.180.143.66"
 USER = "u263681140_students"
 PASSWORD = "testStudents@123"
 DATABASE = "u263681140_students"
+def fetch_book_details(book_id):
+    query = """
+        SELECT 
+            BookHistory.date AS BorrowDate,
+            BookHistory.RFidNo,
+            BookHistory.BookId,
+            BookHistory.ReturnDate,
+            BookInfo.BookName,
+            BookInfo.Author,
+            BookStudents.Name AS StudentName,
+            BookStudents.Branch,
+            BookStudents.Year
+        FROM 
+            BookHistory
+        JOIN 
+            BookInfo 
+        ON 
+            BookHistory.BookId = BookInfo.id
+        JOIN 
+            BookStudents 
+        ON 
+            BookHistory.RFidNo = BookStudents.RFidNo
+        WHERE 
+            BookHistory.BookId = %s
+    """
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute(query, (book_id,))
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return pd.DataFrame(results)
 
 def update_stock(book_id, new_stock):
     """
@@ -215,63 +246,6 @@ def update_return_status_and_stock(book_id):
     except Exception as e:
         st.error(f"Unexpected error: {e}")
         return False
-def fetch_issued_books():
-    """
-    Fetches the list of issued books along with student details.
-    Joins BookHistory, BookInfo, and BookStudents tables.
-    """
-    # Database connection parameters
-    host = "82.180.143.66"
-    user = "u263681140_students"
-    passwd = "testStudents@123"
-    db_name = "u263681140_students"
-    
-    try:
-        # Establish connection to MySQL database
-        connection = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=passwd,
-            database=db_name
-        )
-        
-        if connection.is_connected():
-            cursor = connection.cursor(dictionary=True)
-            
-            # Query to fetch issued books
-            query = """
-                SELECT 
-                    bs.Name AS StudentName,
-                    bs.RFidNo,
-                    bs.Branch,
-                    bs.Year,
-                    bi.BookName,
-                    bi.Author,
-                    bh.date
-                FROM 
-                    BookHistory bh
-                INNER JOIN 
-                    BookInfo bi ON bh.BookId = bi.id
-                INNER JOIN 
-                    BookStudents bs ON bh.RFidNo = bs.RFidNo
-                WHERE 
-                    bh.ReturnStatus = 0; -- Only show currently issued books
-            """
-            
-            cursor.execute(query)
-            result = cursor.fetchall()  # Fetch all rows
-            return result  # Return the list of issued books
-        
-    except Error as e:
-        # Log error for debugging purposes
-        print(f"Error connecting to the database: {e}")
-        return None
-    
-    finally:
-        # Close the connection
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
 def fetch_rfid_data():
     """
     Fetch the latest RFidNo from the ReadRFID table.
@@ -408,17 +382,24 @@ def main():
         else:
             st.info("Please scan a QR code to view book information.")
     with tab3:
-            st.subheader("List of Issued Books")
-            issued_books = fetch_issued_books()
-            if issued_books:
-                # Convert the data into a pandas DataFrame for better display
-                import pandas as pd
-                df = pd.DataFrame(issued_books)
-                st.dataframe(df)
-            else:
-                st.info("No books are currently issued.")
-
-
-
+            st.subheader("Serch Book Here")
+            # Input for BookId
+            book_id = st.text_input("Enter BookId to search:")
+            
+            if st.button("Search"):
+                if book_id.strip():
+                    try:
+                        data = fetch_book_details(book_id)
+                        if not data.empty:
+                            st.dataframe(data)
+                        else:
+                            st.write("No data found for the given BookId.")
+                    except Exception as e:
+                        st.error(f"An error occurred: {e}")
+                else:
+                    st.warning("Please enter a valid BookId.")
+        
+        
+        
 if __name__ == "__main__":
     main()
