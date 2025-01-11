@@ -266,7 +266,7 @@ def main():
     with tab1:
         issue_or_return = st.radio(
             "What action would you like to perform?",
-            ["Issue", "Return"]
+            ["Issue Book", "Return Book","CheckBooks"]
         )
 
         book_id = read_qr_code_from_camera(issue_or_return.lower())
