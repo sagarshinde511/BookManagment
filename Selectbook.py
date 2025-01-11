@@ -215,13 +215,11 @@ def update_return_status_and_stock(book_id):
     except Exception as e:
         st.error(f"Unexpected error: {e}")
         return False
-def fetch_grouped_books(status_filter):
+def fetch_issued_books():
     """
-    Fetches and groups issued books based on ReturnStatus.
-    - status_filter: "past" for past issued books (ReturnStatus = 1),
-                     "current" for currently issued books (ReturnStatus = 0).
+    Fetches the list of issued books along with student details.
+    Joins BookHistory, BookInfo, and BookStudents tables.
     """
-    
     try:
         # Establish connection to MySQL database
         connection = mysql.connector.connect(
@@ -233,16 +231,8 @@ def fetch_grouped_books(status_filter):
         if connection.is_connected():
             cursor = connection.cursor(dictionary=True)
             
-            # Determine query based on status_filter
-            if status_filter == "past":
-                return_status_condition = "1"
-            elif status_filter == "current":
-                return_status_condition = "0"
-            else:
-                raise ValueError("Invalid status_filter. Use 'past' or 'current'.")
-            
-            # Query to fetch books based on ReturnStatus
-            query = f"""
+            # Corrected query to join tables and fetch issued book details
+            query = """
                 SELECT 
                     bs.Name AS StudentName,
                     bs.RFidNo,
@@ -258,13 +248,14 @@ def fetch_grouped_books(status_filter):
                 INNER JOIN 
                     BookStudents bs ON bh.RFidNo = bs.RFidNo
                 WHERE 
-                    bh.ReturnStatus = {return_status_condition};
+                    bh.ReturnStatus = 0; -- Only show currently issued books
             """
             cursor.execute(query)
             result = cursor.fetchall()
             return result
     except Error as e:
-        return f"Error connecting to the database: {e}"
+        st.error(f"Error connecting to the database: {e}")
+        return None
     finally:
         if connection.is_connected():
             cursor.close()
@@ -360,6 +351,8 @@ def main():
             if st.button("Read RFID"):
                 rfid_no = fetch_rfid_data()
                 if rfid_no:
+                    st.success(f"RFID Number: {rfid_no}")
+                    book_history = fetch_book_history(rfid_no)
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
