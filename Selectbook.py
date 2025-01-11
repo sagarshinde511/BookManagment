@@ -378,7 +378,6 @@ def fetch_book_history(rfid_no):
 
 def authenticate(username, password):
     """Authenticate user based on provided username and password."""'
-    st.sidebar.error("calling athentication.")
     return username == USERNAME and password == PASSWORD
 
 def main():
