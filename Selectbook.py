@@ -359,10 +359,22 @@ def main():
                 rfid_no = fetch_rfid_data()
                 if rfid_no:
                     st.success(f"RFID Number: {rfid_no}")
-                    book_history = fetch_book_history(rfid_no)
-                    if book_history:
-                        st.subheader("Book History")
-                        st.table(book_history)
+                    grouped_history = fetch_book_history(rfid_no)
+        
+                    if grouped_history:
+                        # Display Currently Issued Books
+                        st.subheader("Currently Issued Books")
+                        if grouped_history["current_issued_books"]:
+                            st.table(grouped_history["current_issued_books"])
+                        else:
+                            st.info("No books are currently issued.")
+        
+                        # Display Past Issued Books
+                        st.subheader("Past Issued Books")
+                        if grouped_history["past_issued_books"]:
+                            st.table(grouped_history["past_issued_books"])
+                        else:
+                            st.info("No past issued books found.")
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
