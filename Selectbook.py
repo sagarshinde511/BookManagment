@@ -281,6 +281,22 @@ def fetch_rfid_data():
         if connection.is_connected():
             cursor.close()
             connection.close()
+def generate_qr_code(url):
+    # Create a QR Code instance
+    qr = qrcode.QRCode(
+        version=5,  # Controls the size of the QR Code
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=10,  # Size of each box in the QR code grid
+        border=4,  # Thickness of the border (in boxes)
+    )
+    
+    # Add the URL to the QR Code
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    # Create an image from the QR Code instance
+    img = qr.make_image(fill_color="black", back_color="white")
+    return img
 
 def fetch_all_books():
     query = "SELECT id, BookName, Author, Instock, AvailableStock FROM BookInfo"
@@ -454,14 +470,33 @@ def main():
                     st.error(f"Error fetching books: {e}")
             elif mode == "Genrate QR Code":
                 st.subheader("Genrate QR code for Book")
-                try:
-                    books = fetch_all_books()
-                    if not books.empty:
-                        st.dataframe(books)
+                url = st.text_input("Enter BookID to Genrate QR Code:")
+                
+                if st.button("Generate QR Code"):
+                    if url.strip():
+                        try:
+                            # Generate QR code
+                            qr_image = generate_qr_code(url)
+                            
+                            # Convert QR code image to BytesIO for display
+                            buffer = BytesIO()
+                            qr_image.save(buffer, format="PNG")
+                            buffer.seek(0)
+                            
+                            # Display the QR code
+                            st.image(Image.open(buffer), caption="Your QR Code", use_column_width=True)
+                            
+                            # Provide download option
+                            st.download_button(
+                                label="Download QR Code",
+                                data=buffer,
+                                file_name= url + "qrcode.png",
+                                mime="image/png"
+                            )
+                        except Exception as e:
+                            st.error(f"Error generating QR Code: {e}")
                     else:
-                        st.write("No books found in the library.")
-                except Exception as e:
-                    st.error(f"Error fetching books: {e}")
+                        st.warning("Please enter a valid URL or text.")
         
             elif mode == "Add Book Info":
                 st.subheader("Add Book Info")
