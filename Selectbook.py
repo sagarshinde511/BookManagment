@@ -283,7 +283,7 @@ def fetch_rfid_data():
             connection.close()
 
 def fetch_all_books():
-    query = "SELECT id, BookName, Author FROM BookInfo"
+    query = "SELECT id, BookName, Author, Instock, AvailableStock FROM BookInfo"
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(query)
@@ -293,11 +293,11 @@ def fetch_all_books():
     return pd.DataFrame(results)
 
 # Add a new book to the BookInfo table
-def add_new_book(book_name, author):
-    query = "INSERT INTO BookInfo (BookName, Author) VALUES (%s, %s)"
+def add_new_book(book_name, author,Instock, AvailableStock):
+    query = "INSERT INTO BookInfo (BookName, Author, Instock, AvailableStock) VALUES (%s, %s, %s, %s)"
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute(query, (book_name, author))
+    cursor.execute(query, (book_name, author, Instock, AvailableStock))
     conn.commit()
     cursor.close()
     conn.close()
@@ -445,12 +445,14 @@ def main():
             with st.form("add_book_form"):
                 book_name = st.text_input("Book Name")
                 author = st.text_input("Author")
+                InStock = st.text_input("In Stock")
+                AvailableStock = st.text_input("Availanle Stock")
                 submit = st.form_submit_button("Add Book")
                 
                 if submit:
                     if book_name.strip() and author.strip():
                         try:
-                            add_new_book(book_name, author)
+                            add_new_book(book_name, author,Instock, AvailableStock)
                             st.success(f"Book '{book_name}' by {author} added successfully!")
                         except Exception as e:
                             st.error(f"Error adding book: {e}")
