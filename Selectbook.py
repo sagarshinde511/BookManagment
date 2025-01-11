@@ -430,34 +430,51 @@ def main():
             st.subheader("Serch Book Here")
             # Input for BookId
             # Display all books
-            try:
-                books = fetch_all_books()
-                if not books.empty:
-                    st.dataframe(books)
-                else:
-                    st.write("No books found in the library.")
-            except Exception as e:
-                st.error(f"Error fetching books: {e}")
-            
-            st.subheader("Add a New Book")
-            
-            # Book addition form
-            with st.form("add_book_form"):
-                book_name = st.text_input("Book Name")
-                author = st.text_input("Author")
-                InStock = st.text_input("In Stock")
-                AvailableStock = st.text_input("Availanle Stock")
-                submit = st.form_submit_button("Add Book")
-                
-                if submit:
-                    if book_name.strip() and author.strip():
-                        try:
-                            add_new_book(book_name, author,Instock, AvailableStock)
-                            st.success(f"Book '{book_name}' by {author} added successfully!")
-                        except Exception as e:
-                            st.error(f"Error adding book: {e}")
+            mode = st.radio("Select an Option", ["Fetch All Books", "Add or Update Book Info"])
+        
+            if mode == "Fetch All Books":
+                st.subheader("Books in Library")
+                try:
+                    books = fetch_all_books()
+                    if not books.empty:
+                        st.dataframe(books)
                     else:
-                        st.warning("Please provide both Book Name and Author.")
+                        st.write("No books found in the library.")
+                except Exception as e:
+                    st.error(f"Error fetching books: {e}")
+        
+            elif mode == "Add or Update Book Info":
+                st.subheader("Add or Update Book Info")
+        
+                # Book addition or update form
+                with st.form("book_form"):
+                    action = st.radio("Select Action", ["Add New Book", "Update Existing Book"])
+                    if action == "Update Existing Book":
+                        book_id = st.text_input("Book ID (for Update)")
+                    book_name = st.text_input("Book Name")
+                    author = st.text_input("Author")
+                    submit = st.form_submit_button("Submit")
+        
+                    if submit:
+                        if action == "Add New Book":
+                            if book_name.strip() and author.strip():
+                                try:
+                                    add_new_book(book_name, author)
+                                    st.success(f"Book '{book_name}' by {author} added successfully!")
+                                except Exception as e:
+                                    st.error(f"Error adding book: {e}")
+                            else:
+                                st.warning("Please provide both Book Name and Author.")
+                        
+                        elif action == "Update Existing Book":
+                            if book_id.strip() and book_name.strip() and author.strip():
+                                try:
+                                    update_book_info(book_id, book_name, author)
+                                    st.success(f"Book ID '{book_id}' updated to '{book_name}' by {author} successfully!")
+                                except Exception as e:
+                                    st.error(f"Error updating book: {e}")
+                            else:
+                                st.warning("Please provide Book ID, Book Name, and Author.")
         
 if __name__ == "__main__":
     main()
