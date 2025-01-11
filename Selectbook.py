@@ -260,12 +260,83 @@ def fetch_issued_books():
         if connection.is_connected():
             cursor.close()
             connection.close()
+def fetch_rfid_data():
+    """
+    Fetch the latest RFidNo from the ReadRFID table.
+    """
+    try:
+        # Establish connection to MySQL database
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=passwd,
+            database=db_name
+        )
+        if connection.is_connected():
+            cursor = connection.cursor(dictionary=True)
+            # Query to fetch the most recent RFidNo from the ReadRFID table
+            query = "SELECT RFidNo FROM ReadRFID ORDER BY id DESC LIMIT 1"
+            cursor.execute(query)
+            result = cursor.fetchone()
+            return result['RFidNo'] if result else None
+    except Error as e:
+        st.error(f"Error connecting to the database: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+
+def fetch_book_history(rfid_no):
+    """
+    Fetch all rows from BookHistory where RFidNo matches the given value.
+    """
+    try:
+        # Establish connection to MySQL database
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=passwd,
+            database=db_name
+        )
+        if connection.is_connected():
+            cursor = connection.cursor(dictionary=True)
+            # Query to fetch book history for the given RFidNo
+            query = """
+                SELECT 
+                    bh.BookId, 
+                    bi.BookName, 
+                    bi.Author, 
+                    bh.date AS IssueDate, 
+                    bh.ReturnStatus, 
+                    bh.ReturnDate 
+                FROM 
+                    BookHistory bh
+                INNER JOIN 
+                    BookInfo bi ON bh.BookId = bi.id
+                WHERE 
+                    bh.RFidNo = %s
+            """
+            cursor.execute(query, (rfid_no,))
+            result = cursor.fetchall()
+            return result
+    except Error as e:
+        st.error(f"Error connecting to the database: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
+
 def main():
     # Create tabs for the app
     tab1, tab2, tab3 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List"])
     
+    tab1, tab2, tab3 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List"])
+    
     with tab1:
-        # Radio button for action selection
         issue_or_return = st.radio(
             "What action would you like to perform?",
             ["Issue Book", "Return Book", "CheckBooks"]
@@ -276,6 +347,20 @@ def main():
             book_id = read_qr_code_from_camera(issue_or_return.lower())
             if book_id:
                 st.session_state["book_id"] = book_id
+
+        elif issue_or_return == "CheckBooks":
+            if st.button("Read RFID"):
+                rfid_no = fetch_rfid_data()
+                if rfid_no:
+                    st.success(f"RFID Number: {rfid_no}")
+                    book_history = fetch_book_history(rfid_no)
+                    if book_history:
+                        st.subheader("Book History")
+                        st.table(book_history)
+                    else:
+                        st.warning("No book history found for the given RFID.")
+                else:
+                    st.error("No RFID data available in the ReadRFID table.")
     with tab2:
         if "book_id" in st.session_state:
             book_id = st.session_state["book_id"]
