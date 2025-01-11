@@ -220,6 +220,12 @@ def fetch_issued_books():
     Fetches the list of issued books along with student details.
     Joins BookHistory, BookInfo, and BookStudents tables.
     """
+    # Database connection parameters
+    host = "82.180.143.66"
+    user = "u263681140_students"
+    passwd = "testStudents@123"
+    db_name = "u263681140_students"
+    
     try:
         # Establish connection to MySQL database
         connection = mysql.connector.connect(
@@ -228,10 +234,11 @@ def fetch_issued_books():
             password=passwd,
             database=db_name
         )
+        
         if connection.is_connected():
             cursor = connection.cursor(dictionary=True)
             
-            # Corrected query to join tables and fetch issued book details
+            # Query to fetch issued books
             query = """
                 SELECT 
                     bs.Name AS StudentName,
@@ -250,14 +257,19 @@ def fetch_issued_books():
                 WHERE 
                     bh.ReturnStatus = 0; -- Only show currently issued books
             """
+            
             cursor.execute(query)
-            result = cursor.fetchall()
-            return result
+            result = cursor.fetchall()  # Fetch all rows
+            return result  # Return the list of issued books
+        
     except Error as e:
-        st.error(f"Error connecting to the database: {e}")
+        # Log error for debugging purposes
+        print(f"Error connecting to the database: {e}")
         return None
+    
     finally:
-        if connection.is_connected():
+        # Close the connection
+        if 'connection' in locals() and connection.is_connected():
             cursor.close()
             connection.close()
 def fetch_rfid_data():
