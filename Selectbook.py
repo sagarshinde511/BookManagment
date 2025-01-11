@@ -241,7 +241,6 @@ def fetch_issued_books():
                     bi.BookName,
                     bi.Author,
                     bh.date,
-                    bh.DueDate
                 FROM 
                     BookHistory bh
                 INNER JOIN 
