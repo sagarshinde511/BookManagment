@@ -5,3 +5,4 @@ Pillow
 numpy
 datetime
 pandas
+qrcode[pil]
