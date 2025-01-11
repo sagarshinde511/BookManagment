@@ -263,13 +263,16 @@ def fetch_issued_books():
 def main():
     # Create tabs for the app
     tab1, tab2, tab3 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List"])
+    
     with tab1:
+        # Radio button for action selection
         issue_or_return = st.radio(
             "What action would you like to perform?",
-            ["Issue Book", "Return Book","CheckBooks"]
+            ["Issue Book", "Return Book", "CheckBooks"]
         )
 
-       if issue_or_return in ["Issue Book", "Return Book"]:
+        # Only call `read_qr_code_from_camera` if "Issue Book" or "Return Book" is selected
+        if issue_or_return in ["Issue Book", "Return Book"]:
             book_id = read_qr_code_from_camera(issue_or_return.lower())
             if book_id:
                 st.session_state["book_id"] = book_id
