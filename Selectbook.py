@@ -45,7 +45,7 @@ def fetch_book_details(book_id):
     cursor.execute(query, (book_id,))
     results = cursor.fetchall()
     cursor.close()
-    conn.close()
+    connection.close()
     return pd.DataFrame(results)
 
 def update_stock(book_id, new_stock):
