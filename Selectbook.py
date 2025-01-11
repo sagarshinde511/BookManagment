@@ -440,7 +440,7 @@ def main():
             st.subheader("Serch Book Here")
             # Input for BookId
             # Display all books
-            mode = st.radio("Select an Option", ["Fetch All Books", "Add or Update Book Info"])
+            mode = st.radio("Select an Option", ["Fetch All Books", "Add Book Info", "Update Book Info", "Genrate QR Code"])
         
             if mode == "Fetch All Books":
                 st.subheader("Books in Library")
@@ -452,9 +452,19 @@ def main():
                         st.write("No books found in the library.")
                 except Exception as e:
                     st.error(f"Error fetching books: {e}")
+            elif mode == "Genrate QR Code":
+                st.subheader("Genrate QR code for Book")
+                try:
+                    books = fetch_all_books()
+                    if not books.empty:
+                        st.dataframe(books)
+                    else:
+                        st.write("No books found in the library.")
+                except Exception as e:
+                    st.error(f"Error fetching books: {e}")
         
-            elif mode == "Add or Update Book Info":
-                st.subheader("Add or Update Book Info")
+            elif mode == "Add Book Info":
+                st.subheader("Add Book Info")
         
                 # Book addition or update form
                 with st.form("book_form"):
