@@ -240,7 +240,7 @@ def fetch_issued_books():
                     bs.Year,
                     bi.BookName,
                     bi.Author,
-                    bh.IssueDate,
+                    bh.date,
                     bh.DueDate
                 FROM 
                     BookHistory bh
