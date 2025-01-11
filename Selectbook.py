@@ -215,6 +215,53 @@ def update_return_status_and_stock(book_id):
     except Exception as e:
         st.error(f"Unexpected error: {e}")
         return False
+def fetch_issued_books():
+    """
+    Fetches the list of issued books along with student details.
+    Joins BookHistory, BookInfo, and BookStudents tables.
+    """
+    try:
+        # Establish connection to MySQL database
+        connection = mysql.connector.connect(
+            host=host,
+            user=user,
+            password=passwd,
+            database=db_name
+        )
+        if connection.is_connected():
+            cursor = connection.cursor(dictionary=True)
+            
+            # Query to join tables and fetch issued book details
+            query = """
+                SELECT 
+                    bs.Name AS StudentName,
+                    bs.RFidNo,
+                    bs.Branch,
+                    bs.Year,
+                    bi.BookName,
+                    bi.Author,
+                    bh.IssueDate,
+                    bh.DueDate
+                FROM 
+                    BookHistory bh
+                INNER JOIN 
+                    BookInfo bi ON bh.BookId = bi.id
+                INNER JOIN 
+                    BookStudents bs ON bh.RFidNo = bs.RFidNo
+                WHERE 
+                    bh.ReturnStatus = 0; -- Only show currently issued books
+            """
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return result
+    except Error as e:
+        st.error(f"Error connecting to the database: {e}")
+        return None
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            connection.close()
+
 def main():
     # Create tabs for the app
     tab1, tab2 = st.tabs(["QR Code Scanner", "Book Information Viewer"])
@@ -264,6 +311,17 @@ def main():
                 st.error("Book information could not be retrieved. Please check the Book ID.")
         else:
             st.info("Please scan a QR code to view book information.")
+    with tab3:
+            st.subheader("List of Issued Books")
+            issued_books = fetch_issued_books()
+            if issued_books:
+                # Convert the data into a pandas DataFrame for better display
+                import pandas as pd
+                df = pd.DataFrame(issued_books)
+                st.dataframe(df)
+            else:
+                st.info("No books are currently issued.")
+    
 
 if __name__ == "__main__":
     main()
