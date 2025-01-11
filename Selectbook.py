@@ -23,10 +23,6 @@ USER = "u263681140_students"
 PASSWORD = "testStudents@123"
 DATABASE = "u263681140_students"
 
-def authenticate(username, password):
-    """Authenticate user based on provided username and password."""
-    return username == USERNAME and password == PASSWORD
-
 def get_connection():
     return mysql.connector.connect(
         host="82.180.143.66",
@@ -379,6 +375,11 @@ def fetch_book_history(rfid_no):
             cursor.close()
             connection.close()
 
+
+def authenticate(username, password):
+    """Authenticate user based on provided username and password."""'
+    st.sidebar.error("calling athentication.")
+    return username == USERNAME and password == PASSWORD
 
 def main():
     # Display login form on the sidebar
