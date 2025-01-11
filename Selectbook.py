@@ -6,6 +6,9 @@ import mysql.connector
 from mysql.connector import Error
 from datetime import datetime
 import pandas as pd
+import qrcode
+from io import BytesIO
+
 
 # MySQL database connection details
 host = "82.180.143.66"
