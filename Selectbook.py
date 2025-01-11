@@ -4,6 +4,7 @@ from PIL import Image
 import numpy as np
 import mysql.connector
 from mysql.connector import Error
+from datetime import datetime
 
 # MySQL database connection details
 host = "82.180.143.66"
@@ -167,6 +168,7 @@ def create_history(rfid, book_id):
         st.error(f"Unexpected error: {e}")
         return False
 
+
 def update_return_status_and_stock(book_id):
     try:
         # Connect to the MySQL database
@@ -178,9 +180,16 @@ def update_return_status_and_stock(book_id):
         )
         cursor = conn.cursor()
 
-        # Update ReturnStatus to 1 where BookId matches and ReturnStatus is NULL
-        query = "UPDATE BookHistory SET ReturnStatus = 1 WHERE BookId = %s AND ReturnStatus IS NULL"
-        cursor.execute(query, (book_id,))
+        # Get the current date
+        current_date = datetime.now().strftime('%Y-%m-%d')
+
+        # Update ReturnStatus to 1 and set the ReturnDate where BookId matches and ReturnStatus is NULL
+        query = """
+            UPDATE BookHistory 
+            SET ReturnStatus = 1, ReturnDate = %s 
+            WHERE BookId = %s AND ReturnStatus IS NULL
+        """
+        cursor.execute(query, (current_date, book_id))
         
         # Increase the available stock by 1 for the book
         stock_query = "UPDATE BookInfo SET AvailableStock = AvailableStock + 1 WHERE id = %s"
@@ -191,9 +200,9 @@ def update_return_status_and_stock(book_id):
 
         # Check if rows were affected
         if cursor.rowcount > 0:
-            st.success(f"Return status updated and available stock increased for Book ID {book_id}.")
+            st.success(f"Return status updated, return date set to {current_date}, and available stock increased for Book ID {book_id}.")
         else:
-            st.warning("No matching entry found for return or already returned.")
+            st.warning("No matching entry found for return or the book is already returned.")
 
         # Close the connection
         cursor.close()
@@ -206,8 +215,6 @@ def update_return_status_and_stock(book_id):
     except Exception as e:
         st.error(f"Unexpected error: {e}")
         return False
-
-# Main function
 def main():
     # Create tabs for the app
     tab1, tab2 = st.tabs(["QR Code Scanner", "Book Information Viewer"])
