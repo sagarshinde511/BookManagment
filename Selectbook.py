@@ -16,6 +16,14 @@ HOST = "82.180.143.66"
 USER = "u263681140_students"
 PASSWORD = "testStudents@123"
 DATABASE = "u263681140_students"
+def get_connection():
+    return mysql.connector.connect(
+        host="82.180.143.66",
+        user="u263681140_students",
+        passwd="testStudents@123",
+        database="u263681140_students"
+    )
+
 def fetch_book_details(book_id):
     query = """
         SELECT 
@@ -41,13 +49,13 @@ def fetch_book_details(book_id):
         WHERE 
             BookHistory.BookId = %s
     """
+    conn = get_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute(query, (book_id,))
     results = cursor.fetchall()
     cursor.close()
-    connection.close()
+    conn.close()
     return pd.DataFrame(results)
-
 def update_stock(book_id, new_stock):
     """
     Updates the available stock for a book in the database.
