@@ -441,6 +441,9 @@ def main():
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
                 else:
+                    st.write(f"**Available Stock:** int(book_info['AvailableStock'])")
+                    st.write(f"**issue_or_return:** issue_or_return)")
+
                     st.warning("This book is out of stock. need to check")
             else:
                 st.error("Book information could not be retrieved. Please check the Book ID.")
