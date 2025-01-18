@@ -432,10 +432,10 @@ def main():
                 if rfid_no:
                     st.success(f"RFID Number: {rfid_no}")
                     book_history = fetch_book_history(rfid_no)
-                    Update_RFIDNumber(0);
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
+                        Update_RFIDNumber(0);
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
