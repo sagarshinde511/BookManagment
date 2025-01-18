@@ -424,6 +424,7 @@ def main():
             book_id = read_qr_code_from_camera(issue_or_return.lower())
             if book_id:
                 st.session_state["book_id"] = book_id
+                
 
         elif issue_or_return == "CheckBooks":
             if st.button("Read RFID"):
@@ -431,6 +432,7 @@ def main():
                 if rfid_no:
                     st.success(f"RFID Number: {rfid_no}")
                     book_history = fetch_book_history(rfid_no)
+                    Update_RFIDNumber(0);
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
@@ -468,6 +470,7 @@ def main():
                     # Handle return by updating the return status and increasing stock
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
+                        Update_RFIDNumber(0);
                 else:
                     st.write(f"**Available Stock:** {book_info['AvailableStock']}")
                     st.write(f"**issue_or_return:** {issue_or_return}")
