@@ -453,7 +453,7 @@ def main():
                     # Add a button to assign the book
                     if st.button("Assign Book"):
                         rfid = fetch_rfid(book_id)  # Fetch RFID for the book
-                        if rfid and int(rfid) != 0:
+                        if rfid != "0":
                             st.success(f"RFID Number: {rfid}")
                             create_history(rfid, book_id)
 
