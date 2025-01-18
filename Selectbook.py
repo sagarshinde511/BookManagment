@@ -422,7 +422,7 @@ def main():
                 st.write(f"**In Stock:** {book_info['InStock']}")
                 st.write(f"**Available Stock:** {book_info['AvailableStock']}")
 
-                if issue_or_return == "Issue" :
+                if int(book_info['AvailableStock']) > 0 :
                     # Add a button to assign the book
                     if st.button("Assign Book"):
                         rfid = fetch_rfid(book_id)  # Fetch RFID for the book
@@ -441,7 +441,7 @@ def main():
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
                 else:
-                    st.warning("This book is out of stock. need to chek")
+                    st.warning("This book is out of stock. need to check")
             else:
                 st.error("Book information could not be retrieved. Please check the Book ID.")
         else:
