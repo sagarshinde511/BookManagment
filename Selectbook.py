@@ -334,6 +334,33 @@ def Update_RFIDNumber(new_rfid):
             if conn.is_connected():
                 cursor.close()
                 conn.close()
+def Update_BookScanStatus(state):
+    if state ==  0 or state ==  1 :
+        try:
+            # Connect to the database
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            # SQL query to update RFidNo where id = 1
+            update_query = """
+                UPDATE BookScanState 
+                SET status = %s 
+                WHERE id = 1
+            """
+
+            # Execute query
+            cursor.execute(update_query, (state,))
+
+            # Commit changes
+            conn.commit()
+
+            st.success("RFidNo updated successfully!")
+        except mysql.connector.Error as e:
+            st.error(f"Error updating RFidNo: {e}")
+        finally:
+            if conn.is_connected():
+                cursor.close()
+                conn.close()
 
 def fetch_all_books():
     query = "SELECT id, BookName, Author, Instock, AvailableStock FROM BookInfo"
@@ -422,6 +449,7 @@ def main():
         # Only call `read_qr_code_from_camera` if "Issue Book" or "Return Book" is selected
         if issue_or_return in ["Issue Book", "Return Book"]:
             book_id = read_qr_code_from_camera(issue_or_return.lower())
+            Update_BookScanStatus(1)
             if book_id:
                 st.session_state["book_id"] = book_id
                 
@@ -436,6 +464,7 @@ def main():
                         st.subheader("Book History")
                         st.table(book_history)
                         Update_RFIDNumber(0);
+                        
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
@@ -462,7 +491,8 @@ def main():
                             # Update available stock in the database
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
-                            Update_RFIDNumber(0);
+                            Update_RFIDNumber(0)
+                            Update_BookScanStatus(0)
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
@@ -470,7 +500,8 @@ def main():
                     # Handle return by updating the return status and increasing stock
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
-                        Update_RFIDNumber(0);
+                        Update_RFIDNumber(0)
+                        Update_BookScanStatus(0)
                 else:
                     st.write(f"**Available Stock:** {book_info['AvailableStock']}")
                     st.write(f"**issue_or_return:** {issue_or_return}")
