@@ -462,7 +462,7 @@ def main():
                             # Update available stock in the database
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
-                            Update_RFIDNumber(0);
+                            #Update_RFIDNumber(0);
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
