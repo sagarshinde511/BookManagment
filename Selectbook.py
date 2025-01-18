@@ -492,6 +492,8 @@ def main():
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
                             Update_RFIDNumber(0)
+                            Update_BookScanStatus(1)
+
                             #Update_BookScanStatus(0)
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
