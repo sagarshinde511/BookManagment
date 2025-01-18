@@ -435,7 +435,7 @@ def main():
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
-                        Update_RFIDNumber(0);
+                        #Update_RFIDNumber(0);
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
@@ -470,7 +470,7 @@ def main():
                     # Handle return by updating the return status and increasing stock
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
-                        Update_RFIDNumber(0);
+                        #Update_RFIDNumber(0);
                 else:
                     st.write(f"**Available Stock:** {book_info['AvailableStock']}")
                     st.write(f"**issue_or_return:** {issue_or_return}")
