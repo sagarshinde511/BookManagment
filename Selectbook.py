@@ -8,7 +8,7 @@ from datetime import datetime
 import pandas as pd
 import qrcode
 from io import BytesIO
-
+import requests
 USERNAME = "admin"
 PASSWORD = "admin"
 
@@ -307,6 +307,33 @@ def generate_qr_code(url):
     # Create an image from the QR Code instance
     img = qr.make_image(fill_color="black", back_color="white")
     return img
+def Update_RFIDNumber(new_rfid):
+    if new_rfid ==  0:
+        try:
+            # Connect to the database
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            # SQL query to update RFidNo where id = 1
+            update_query = """
+                UPDATE ReadRFID 
+                SET RFidNo = %s 
+                WHERE id = 1
+            """
+
+            # Execute query
+            cursor.execute(update_query, (new_rfid,))
+
+            # Commit changes
+            conn.commit()
+
+            st.success("RFidNo updated successfully!")
+        except mysql.connector.Error as e:
+            st.error(f"Error updating RFidNo: {e}")
+        finally:
+            if conn.is_connected():
+                cursor.close()
+                conn.close()
 
 def fetch_all_books():
     query = "SELECT id, BookName, Author, Instock, AvailableStock FROM BookInfo"
@@ -426,13 +453,14 @@ def main():
                     # Add a button to assign the book
                     if st.button("Assign Book"):
                         rfid = fetch_rfid(book_id)  # Fetch RFID for the book
-                        if rfid != "0":
+                        if rfid and int(rfid) != 0:
                             st.success(f"RFID Number: {rfid}")
                             create_history(rfid, book_id)
 
                             # Update available stock in the database
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
+                            Update_RFIDNumber(0);
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
@@ -471,7 +499,7 @@ def main():
             # Input for BookId
             # Display all books
             mode = st.radio("Select an Option", ["Fetch All Books", "Add Book Info", "Update Book Info", "Genrate QR Code"])
-        
+
             if mode == "Fetch All Books":
                 st.subheader("Books in Library")
                 try:
