@@ -492,7 +492,7 @@ def main():
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
                             Update_RFIDNumber(0)
-                            Update_BookScanStatus(0)
+                            #Update_BookScanStatus(0)
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
@@ -501,7 +501,7 @@ def main():
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
                         Update_RFIDNumber(0)
-                        Update_BookScanStatus(0)
+                        #Update_BookScanStatus(0)
                 else:
                     st.write(f"**Available Stock:** {book_info['AvailableStock']}")
                     st.write(f"**issue_or_return:** {issue_or_return}")
