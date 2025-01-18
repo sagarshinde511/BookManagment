@@ -449,7 +449,7 @@ def main():
         # Only call `read_qr_code_from_camera` if "Issue Book" or "Return Book" is selected
         if issue_or_return in ["Issue Book", "Return Book"]:
             book_id = read_qr_code_from_camera(issue_or_return.lower())
-            Update_BookScanStatus(1)
+            
             if book_id:
                 st.session_state["book_id"] = book_id
                 
