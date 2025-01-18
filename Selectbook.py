@@ -422,7 +422,7 @@ def main():
                 st.write(f"**In Stock:** {book_info['InStock']}")
                 st.write(f"**Available Stock:** {book_info['AvailableStock']}")
 
-                if int(book_info['AvailableStock']) > 0 :
+                if issue_or_return == "Issue" and int(book_info['AvailableStock']) > 0 :
                     # Add a button to assign the book
                     if st.button("Assign Book"):
                         rfid = fetch_rfid(book_id)  # Fetch RFID for the book
