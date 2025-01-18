@@ -435,7 +435,7 @@ def main():
                     if book_history:
                         st.subheader("Book History")
                         st.table(book_history)
-                        #Update_RFIDNumber(0);
+                        Update_RFIDNumber(0);
                     else:
                         st.warning("No book history found for the given RFID.")
                 else:
@@ -454,7 +454,7 @@ def main():
                 if issue_or_return == "Issue Book" and int(book_info['AvailableStock']) > 0 :
                     # Add a button to assign the book
                     if st.button("Assign Book"):
-                        rfid = fetch_rfid(book_id)  # Fetch RFID for the book
+                        rfid = fetch_rfid(1)  # Fetch RFID for the book
                         if rfid != "0":
                             st.success(f"RFID Number: {rfid}")
                             create_history(rfid, book_id)
@@ -462,7 +462,7 @@ def main():
                             # Update available stock in the database
                             new_stock = int(book_info['AvailableStock']) - 1
                             update_stock(book_id, new_stock)
-                            #Update_RFIDNumber(0);
+                            Update_RFIDNumber(0);
                             st.info(f"Book assigned successfully. Updated available stock: {new_stock}")
                         else:
                             st.error("RFID Number is either not assigned or invalid.")
@@ -470,7 +470,7 @@ def main():
                     # Handle return by updating the return status and increasing stock
                     if st.button("Return Book"):
                         update_return_status_and_stock(book_id)
-                        #Update_RFIDNumber(0);
+                        Update_RFIDNumber(0);
                 else:
                     st.write(f"**Available Stock:** {book_info['AvailableStock']}")
                     st.write(f"**issue_or_return:** {issue_or_return}")
