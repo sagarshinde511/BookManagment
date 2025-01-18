@@ -383,26 +383,6 @@ def fetch_book_history(rfid_no):
 
 def main():
     # Display login form on the sidebar
-  '''  
-    with st.sidebar:
-        st.header("Login to Access the App")
-        username = st.text_input("Username", "")
-        password = st.text_input("Password", "", type="password")
-        login_button = st.button("Login")
-
-        # Check if the login button is clicked
-        if login_button:
-        
-            if authenticate(username, password):
-                st.session_state.logged_in = True
-                st.sidebar.success("Login successful!")
-            else:
-                st.sidebar.error("Invalid username or password check once.")
-
-    # Only show the main content if the user is authenticated
-    if "logged_in" in st.session_state and st.session_state.logged_in:
-        # Create tabs for the app
-    '''
     tab1, tab2, tab3, tab4 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List", "All Books"])
     
     
