@@ -625,27 +625,25 @@ def main():
             elif mode == "Add Student":
                 st.subheader("Add Students Info")            
                 # Book addition or update form
-                with st.form("book_form"):
-                    if action == "Update Existing Book":
-                        book_id = st.text_input("Book ID (for Update)")
-            
-                    student_name = st.text_input("Student Name")
-                    rf = st.text_input("RF Number")
-                    branch = st.text_input("Branch")
-                    year = st.text_input("Acadamic Year")
-            
-                    submit = st.form_submit_button("Submit")
-            
-                    if submit:
-                        if action == "Add Student":
-                            if student_name.strip() and branch.strip():
-                                try:
-                                    add_new_student(student_name, rf, branch, year)
-                                    st.success(f"Book '{student_name}' by {rf} added successfully!")
-                                except Exception as e:
-                                    st.error(f"Error adding student: {e}")
-                            else:
-                                st.warning("Please provide both Student Name and RF.")
+                #with st.form("book_form"):
+        
+                student_name = st.text_input("Student Name")
+                rf = st.text_input("RF Number")
+                branch = st.text_input("Branch")
+                year = st.text_input("Acadamic Year")
+        
+                submit = st.form_submit_button("Submit")
+        
+                if submit:
+                    if action == "Add Student":
+                        if student_name.strip() and branch.strip():
+                            try:
+                                add_new_student(student_name, rf, branch, year)
+                                st.success(f"Book '{student_name}' by {rf} added successfully!")
+                            except Exception as e:
+                                st.error(f"Error adding student: {e}")
+                        else:
+                            st.warning("Please provide both Student Name and RF.")
             
 if __name__ == "__main__":
     main()
