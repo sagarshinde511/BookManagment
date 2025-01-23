@@ -376,7 +376,7 @@ def update_book_info(book_id, book_name, author, Instock, AvailableStock):
     query = "UPDATE BookInfo SET BookName = %s, Author = %s, Instock = %s, AvailableStock = %s WHERE id = %s"
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute(query, (book_name, author, book_id, Instock, AvailableStock))
+    cursor.execute(query, (book_name, author, Instock, AvailableStock, book_id))
     conn.commit()
     cursor.close()
     conn.close()
