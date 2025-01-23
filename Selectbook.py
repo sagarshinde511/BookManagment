@@ -633,17 +633,13 @@ def main():
                 year = st.text_input("Acadamic Year")
         
                 submit = st.form_submit_button("Submit")
-        
                 if submit:
-                    if action == "Add Student":
-                        if student_name.strip() and branch.strip():
+                        if book_name.strip() and author.strip():
                             try:
                                 add_new_student(student_name, rf, branch, year)
                                 st.success(f"Book '{student_name}' by {rf} added successfully!")
                             except Exception as e:
-                                st.error(f"Error adding student: {e}")
-                        else:
-                            st.warning("Please provide both Student Name and RF.")
+                                st.error(f"Error adding book: {e}")
             
 if __name__ == "__main__":
     main()
