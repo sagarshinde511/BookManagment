@@ -393,7 +393,7 @@ def add_new_book(book_name, author,Instock, AvailableStock):
     conn.close()
 
 def add_new_student(student_name, rf, branch, year):
-    query = "INSERT INTO BookInfo (Name, RFidNo, Branch, Year) VALUES (%s, %s, %s, %s)"
+    query = "INSERT INTO BookStudents (Name, RFidNo, Branch, Year) VALUES (%s, %s, %s, %s)"
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(query, (student_name, rf, branch, year))
