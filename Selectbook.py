@@ -645,8 +645,6 @@ def main():
                                 st.success(f"Student '{student_name}' by {rf} added successfully!")
                             except Exception as e:
                                 st.error(f"Error adding book: {e}")
-            else:
-                st.sidebar.error("Invalid username or password")
             
 if __name__ == "__main__":
     main()
