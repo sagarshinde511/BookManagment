@@ -451,7 +451,8 @@ def fetch_book_history(rfid_no):
 
 def main():
     # Display login form on the sidebar
-
+    st.sidebar.title("librarian Login Page")
+    
     if not st.session_state.logged_in:
         st.sidebar.subheader("Please log in")
 
@@ -459,6 +460,7 @@ def main():
         password = st.sidebar.text_input("Password", type="password")
 
         if st.sidebar.button("Login"):
+
             if login(username, password):
                 st.session_state.logged_in = True
                 tab1, tab2, tab3, tab4 = st.tabs(["QR Code Scanner", "Book Information Viewer", "Issued Book List", "All Books"])
@@ -655,6 +657,8 @@ def main():
                                             st.success(f"Student '{student_name}' by {rf} added successfully!")
                                         except Exception as e:
                                             st.error(f"Error adding book: {e}")
+            else:
+                st.sidebar.error("Invalid username or password")
             
 if __name__ == "__main__":
     main()
