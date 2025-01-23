@@ -392,6 +392,15 @@ def add_new_book(book_name, author,Instock, AvailableStock):
     cursor.close()
     conn.close()
 
+def add_new_student(student_name, rf, branch, year):
+    query = "INSERT INTO BookInfo (Name, RFidNo, Branch, Year) VALUES (%s, %s, %s, %s)"
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(query, (student_name, rf, branch, year))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def fetch_book_history(rfid_no):
     """
     Fetch all rows from BookHistory where RFidNo matches the given value.
@@ -534,7 +543,7 @@ def main():
             st.subheader("Serch Book Here")
             # Input for BookId
             # Display all books
-            mode = st.radio("Select an Option", ["Fetch All Books", "Add Book Info", "Update Book Info", "Genrate QR Code"])
+            mode = st.radio("Select an Option", ["Fetch All Books", "Add Book Info", "Add Student", "Genrate QR Code"])
 
             if mode == "Fetch All Books":
                 st.subheader("Books in Library")
@@ -613,7 +622,30 @@ def main():
                                     st.error(f"Error updating book: {e}")
                             else:
                                 st.warning("Please provide Book ID, Book Name, and Author.")
-    
+            elif mode == "Add Student":
+                st.subheader("Add Students Info")            
+                # Book addition or update form
+                with st.form("book_form"):
+                    if action == "Update Existing Book":
+                        book_id = st.text_input("Book ID (for Update)")
+            
+                    student_name = st.text_input("Student Name")
+                    rf = st.text_input("RF Number")
+                    branch = st.text_input("Branch")
+                    year = st.text_input("Acadamic Year")
+            
+                    submit = st.form_submit_button("Submit")
+            
+                    if submit:
+                        if action == "Add Student":
+                            if student_name.strip() and branch.strip():
+                                try:
+                                    add_new_student(student_name, rf, branch, year)
+                                    st.success(f"Book '{student_name}' by {rf} added successfully!")
+                                except Exception as e:
+                                    st.error(f"Error adding student: {e}")
+                            else:
+                                st.warning("Please provide both Student Name and RF.")
             
 if __name__ == "__main__":
     main()
