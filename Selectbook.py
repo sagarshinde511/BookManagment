@@ -575,38 +575,40 @@ def main():
                             st.error(f"Error generating QR Code: {e}")
                     else:
                         st.warning("Please enter a valid URL or text.")
-        
+            #here        
             elif mode == "Add Book Info":
                 st.subheader("Add Book Info")
-        
+            
+                # Radio button to choose action
+                action = st.radio("Choose Action", ["Add New Book", "Update Existing Book"])
+            
                 # Book addition or update form
                 with st.form("book_form"):
-                    #action = st.radio("Select Action", ["Add New Book", "Update Existing Book])
-                    #if action == "Update Existing Book":
-                    #    book_id = st.text_input("Book ID (for Update)")
+                    if action == "Update Existing Book":
+                        book_id = st.text_input("Book ID (for Update)")
+            
                     book_name = st.text_input("Book Name")
                     author = st.text_input("Author")
-                    Instock = st.text_input("Instock")
-                    AvailableStock = st.text_input("AvailableStock")
-
+                    Instock = st.text_input("In Stock")
+                    AvailableStock = st.text_input("Available Stock")
+            
                     submit = st.form_submit_button("Submit")
-        
+            
                     if submit:
                         if action == "Add New Book":
                             if book_name.strip() and author.strip():
                                 try:
-                                    add_new_book(book_name, author,Instock, AvailableStock)
+                                    add_new_book(book_name, author, Instock, AvailableStock)
                                     st.success(f"Book '{book_name}' by {author} added successfully!")
                                 except Exception as e:
                                     st.error(f"Error adding book: {e}")
                             else:
                                 st.warning("Please provide both Book Name and Author.")
-                        
                         elif action == "Update Existing Book":
                             if book_id.strip() and book_name.strip() and author.strip():
                                 try:
-                                    update_book_info(book_id, book_name, author)
-                                    st.success(f"Book ID '{book_id}' updated to '{book_name}' by {author} successfully!")
+                                    update_book_info(book_id, book_name, author, Instock, AvailableStock)
+                                    st.success(f"Book ID '{book_id}' updated successfully!")
                                 except Exception as e:
                                     st.error(f"Error updating book: {e}")
                             else:
