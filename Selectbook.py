@@ -632,7 +632,7 @@ def main():
                 branch = st.text_input("Branch")
                 year = st.text_input("Acadamic Year")
         
-                Ssubmit = st.form_submit_button("Submit")
+                #Ssubmit = st.form_submit_button("Submit")
                 if st.button("Add Student"):
                         if student_name.strip() and rf.strip():
                             try:
