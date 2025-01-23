@@ -633,8 +633,8 @@ def main():
                 year = st.text_input("Acadamic Year")
         
                 Ssubmit = st.form_submit_button("Submit")
-                if Ssubmit:
-                        if book_name.strip() and author.strip():
+                if st.button("Add Student"):
+                        if student_name.strip() and rf.strip():
                             try:
                                 add_new_student(student_name, rf, branch, year)
                                 st.success(f"Student '{student_name}' by {rf} added successfully!")
