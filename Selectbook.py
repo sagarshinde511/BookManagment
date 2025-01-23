@@ -372,11 +372,11 @@ def fetch_all_books():
     conn.close()
     return pd.DataFrame(results)
     
-def update_book_info(book_id, book_name, author):
+def update_book_info(book_id, book_name, author, Instock, AvailableStock):
     query = "UPDATE BookInfo SET BookName = %s, Author = %s WHERE id = %s"
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute(query, (book_name, author, book_id))
+    cursor.execute(query, (book_name, author, book_id, Instock, AvailableStock))
     conn.commit()
     cursor.close()
     conn.close()
